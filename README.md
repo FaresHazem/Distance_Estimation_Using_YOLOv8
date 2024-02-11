@@ -1,4 +1,5 @@
-# CrocoMarine Training Final Project: Distance Estimation Using YOLOv8
+# Distance Estimation Using YOLOv8
+CrocoMarine Computer Vision Training Final Project
 
 ![Project Image](Documentation/Images/1.jpg)
 

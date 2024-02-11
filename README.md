@@ -70,5 +70,3 @@ The project folder is named "Distance_Estimation_Using_YOLOv8" and consists of t
 - **Notebooks**: Contains Jupyter notebooks used for YOLOv8 custom object detection using Google Colab and Kaggle.
   - [YOLOv8 Custom Object Detection Using Google Colab.ipynb](Notebooks/YOLOv8%20Custom%20Object%20Detection%20Using%20Google%20Colab.ipynb)
   - [YOLOv8 Custom Object Detection Using Kaggle.ipynb](Notebooks/YOLOv8%20Custom%20Object%20Detection%20Using%20Kaggle.ipynb)
-
-Feel free to clone the repository and explore the code and documentation for detailed insights into the project.

@@ -1,6 +1,6 @@
 # CrocoMarine Training Final Project: Distance Estimation Using YOLOv8
 
-**Made by: Fares Hazem Mohamed Shalaby**
+![Project Image](Documentation/Images/1.jpg)
 
 ## Table Of Contents
 1. [Introduction](#introduction)

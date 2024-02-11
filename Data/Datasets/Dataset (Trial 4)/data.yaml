@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['Box']
+
+roboflow:
+  workspace: zoro-nhav6
+  project: crocomarine-project
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/zoro-nhav6/crocomarine-project/dataset/4

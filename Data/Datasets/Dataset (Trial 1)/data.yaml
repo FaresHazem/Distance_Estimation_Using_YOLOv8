@@ -1,0 +1,13 @@
+train: /kaggle/input/box15x15/Dataset/train/images
+val: /kaggle/input/box15x15/Dataset/valid/images
+test: /kaggle/input/box15x15/Dataset/test/images
+
+nc: 1
+names: ['Box']
+
+roboflow:
+  workspace: zoro-nhav6
+  project: crocomarine-project
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/zoro-nhav6/crocomarine-project/dataset/1

@@ -107,5 +107,5 @@ class ObjectDetection:
         cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    detection = ObjectDetection(model_path=r"C:\Users\fares\Desktop\Croco Task\Models\best.pt")
+    detection = ObjectDetection(model_path=r"D:\College\External Courses\CrocoMarine ROV Competitions\Distance_Estimation_Using_YOLOv8\Code\Models\best.pt")
     detection.run()

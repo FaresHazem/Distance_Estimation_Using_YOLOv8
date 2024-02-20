@@ -7,7 +7,7 @@ focal_length = 1140  # Focal length of the camera
 size_of_black_square_in_real_world = 15.0  # Size of the black square in the real world (in centimeters)
 
 # Load YOLO model
-model = YOLO(r"D:\College\External Courses\CrocoMarine ROV Competitions\Final Project\Code\Models\best.pt")
+model = YOLO(r"D:\College\External Courses\CrocoMarine ROV Competitions\Distance_Estimation_Using_YOLOv8\Code\Models\best.pt")
 
 # Open a video capture object (using the default camera, change the argument if using a different camera)
 cap = cv2.VideoCapture(0)

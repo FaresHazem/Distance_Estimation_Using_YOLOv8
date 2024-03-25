@@ -1,24 +1,10 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
-import cv2
-import numpy as np
-import torch
 class ObjectDetection:
-    """
-    Class for object detection using YOLO model and calculating movement vectors and focal length.
-    """
 
     def __init__(self, model_path):
-        """
-        Initialize the ObjectDetection class.
-
-        Parameters:
-        - model_path (str): Path to the YOLO model.
-        """
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = YOLO(model_path)
-        self.model.to(device) 
 
         self.focal_length = 1140
         self.size_of_black_square_in_real_world = 15.0
@@ -34,30 +20,11 @@ class ObjectDetection:
         self.frame_center_point = None
 
     def DrawLine(self, start_point, end_point, color=(0, 0, 255), thickness=2):
-        """
-        Draw a line on the frame.
-
-        Parameters:
-        - start_point (tuple): Starting point of the line.
-        - end_point (tuple): Ending point of the line.
-        - color (tuple): Color of the line (BGR format).
-        - thickness (int): Thickness of the line.
-        """
         start_point = (int(start_point[0]), int(start_point[1]))
         end_point = (int(end_point[0]), int(end_point[1]))
         cv2.line(self.frame, start_point, end_point, color, thickness)
 
     def DrawArrow(self, direction, color=(0, 0, 255), thickness=2, max_length=50, padding=50):
-        """
-        Draw an arrow on the frame.
-
-        Parameters:
-        - direction (tuple): Direction vector of the arrow.
-        - color (tuple): Color of the arrow (BGR format).
-        - thickness (int): Thickness of the arrow.
-        - max_length (int): Maximum length of the arrow.
-        - padding (int): Padding from the frame edges.
-        """
         arrow_start = (self.width - padding, padding)
         arrow_end = (arrow_start[0] - int(direction[0]), arrow_start[1] - int(direction[1]))
         arrow_length = min(max_length, np.linalg.norm(direction))
@@ -65,19 +32,7 @@ class ObjectDetection:
         cv2.arrowedLine(self.frame, arrow_start,(arrow_start[0] - int(scaled_direction[0]), arrow_start[1] - int(scaled_direction[1])), color,thickness, tipLength=0.5)
 
     def GetMovements(self, frameX, frameY, boxX, boxY, depth):
-        """
-        Calculate the movements and direction vectors.
 
-        Parameters:
-        - frameX (int): X-coordinate of the frame center.
-        - frameY (int): Y-coordinate of the frame center.
-        - boxX (int): X-coordinate of the box center.
-        - boxY (int): Y-coordinate of the box center.
-        - depth (float): Distance to the box.
-
-        Returns:
-        - vectors (list): List of movement vectors and depth.
-        """
         move_x = frameX - boxX
         move_y = frameY - boxY
         text = ""
@@ -99,20 +54,13 @@ class ObjectDetection:
         vector_y = round(move_y / self.frame_center_y, 2)
         vector_z = round(depth / 120, 2)
 
+        #Normalized_vectors = [vector_x, vector_y, vector_z]
         vectors = [round(move_x,2), round(move_y,2), round(depth,2)]
 
         return vectors
 
     def ProcessFrame(self, frame):
-        """
-        Process a frame for object detection and calculate movements and direction vectors.
 
-        Parameters:
-        - frame (numpy.ndarray): Input frame.
-
-        Returns:
-        - frame (numpy.ndarray): Processed frame.
-        """
         self.frame = frame
         if self.height is None or self.width is None:
             self.height, self.width, _ = frame.shape
@@ -131,28 +79,38 @@ class ObjectDetection:
             else:
                 for result_idx, result in enumerate(results):
                     for i, det in enumerate(result.boxes):
+                        #get bounding box
                         bbox = det.xyxy[0].tolist()
                         size_of_black_square_in_image = max(bbox[2] - bbox[0], bbox[3] - bbox[1])
 
+                        #get box center
                         box_center_x = (bbox[2] + bbox[0]) // 2
                         box_center_y = (bbox[3] + bbox[1]) // 2
 
+                        #Line UI
                         self.DrawLine(self.frame_center_point, (box_center_x, box_center_y))
 
+                        #Calculate distance to box
                         distance = (self.size_of_black_square_in_real_world * self.focal_length) / size_of_black_square_in_image
 
+                        #Direction vector to point the direction to center
                         direction_vector = np.array(self.frame_center_point) - np.array((box_center_x, box_center_y))
 
+                        #checking if object is in center
                         is_object_in_center = (abs(self.frame_center_x - box_center_x) <= 20) and (abs(self.frame_center_y - box_center_y) <= 20)
                         box_color = (255, 0, 0) if is_object_in_center else (0, 255, 0)
                         cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), box_color, 2)
 
+                        #Frame Ui to help the agent center the box
                         label = f"Object {i + 1} : Class: Box, Distance: {distance:.2f} cm"
                         cv2.putText(frame, label, (int(bbox[0]), int(bbox[1]) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1, cv2.LINE_AA)
 
+                        #Get movements and direction vectors
                         vectors = self.GetMovements(self.frame_center_x, self.frame_center_y, box_center_x, box_center_y, distance)
                         
                         print(vectors)
+
+                        #TO DO function to send these vectors to the agent
 
                 self.DrawArrow(direction_vector, self.arrow_color, self.arrow_thickness, max_length=self.arrow_max_length)
 
@@ -162,41 +120,43 @@ class ObjectDetection:
         return frame
 
     def calculate_focal_length(self, object_distance_real):
-        """
-        Calculate the focal length using the lens formula.
-
-        Parameters:
-        - object_distance_real (float): Distance to the object in the real world.
-
-        Returns:
-        - None
-        """
+        # Open the camera
         cap = cv2.VideoCapture(0)
+        
+        # Boolean value to iterate on it
         capturing_frames = True
 
         while capturing_frames:
+            # Capture a frame
             ret, frame = cap.read()
             if not ret:
                 print("Error: Unable to capture a frame.")
                 break
 
+            # Display the captured frame for manual measurement of object width
             cv2.imshow("Capture Frame", frame)
             
+            # Check for key press (press 'q' to exit and calculate focal length)
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 capturing_frames = False
-            elif key == 27:
+            elif key == 27:  # Press 'Esc' to exit without calculating focal length
                 break
 
+        # Perform object detection on the last captured frame
         results = self.model.predict(frame, show=True, conf=0.99)
 
+        # Loop through the detected results
         for result_idx, result in enumerate(results):
             for i, det in enumerate(result.boxes):
+                # Get bounding box
                 bbox = det.xyxy[0].tolist()
                 self.size_of_black_square_in_image = max(bbox[2] - bbox[0], bbox[3] - bbox[1])
     
+        # Calculate the focal length using the lens formula
         self.focal_length = round((self.size_of_black_square_in_image * object_distance_real) / self.size_of_black_square_in_real_world)
         
+        # Release the camera
         cv2.waitKey(1000)
         cv2.destroyAllWindows()
         cap.release()
@@ -204,14 +164,14 @@ class ObjectDetection:
         print(f"The focal length is: {self.focal_length}")
     
 if __name__ == "__main__":
-    model_path = r"Models\best (1).pt"
+    model_path = r"C:\Users\fares\Desktop\Demo\best.pt"
     detection = ObjectDetection(model_path)
 
     # Call the calculate_focal_length function
-    #detection.calculate_focal_length(43.0)
+    detection.calculate_focal_length(43.0)
 
-    #choice = input("Choose input type (1 for live stream, 2 for video file): ")
-    choice = '1'
+    choice = input("Choose input type (1 for live stream, 2 for video file): ")
+
     if choice == '1':
         cap = cv2.VideoCapture(0)  # Use live stream
     elif choice == '2':

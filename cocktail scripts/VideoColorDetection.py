@@ -5,7 +5,7 @@ import imutils
 def nothing(x):
     pass
 
-cap = cv2.VideoCapture('cut.avi');
+cap = cv2.VideoCapture(r"D:\College\External Courses\CrocoMarine ROV Competitions\Distance_Estimation_Using_YOLOv8\Data\Videos\Sample 5.mp4");
 #cap = cv2.VideoCapture(0);
 record = False
 cv2.namedWindow("Tracking")

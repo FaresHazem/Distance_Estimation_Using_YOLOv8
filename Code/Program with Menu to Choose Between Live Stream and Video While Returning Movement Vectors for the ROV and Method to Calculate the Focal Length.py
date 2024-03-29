@@ -210,8 +210,7 @@ if __name__ == "__main__":
     # Call the calculate_focal_length function
     #detection.calculate_focal_length(43.0)
 
-    #choice = input("Choose input type (1 for live stream, 2 for video file): ")
-    choice = '1'
+    choice = input("Choose input type (1 for live stream, 2 for video file): ")
     if choice == '1':
         cap = cv2.VideoCapture(0)  # Use live stream
     elif choice == '2':

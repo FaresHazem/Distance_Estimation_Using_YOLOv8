@@ -99,7 +99,7 @@ class ObjectDetection:
 
         return vectors
 
-    def add_accessories(self, frame, num_objects=None, bbox=None, distance=None, direction_vector=None):
+    def Accessories(self, frame, num_objects=None, bbox=None, distance=None, direction_vector=None):
         """
         Add accessories such as text and shapes to the frame.
 
@@ -156,7 +156,7 @@ class ObjectDetection:
             cv2.putText(frame, label, (int(bbox[0]), int(bbox[1]) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
 
 
-    def ProcessFrame(self, frame):
+    def YoloModel(self, frame):
         """
         Process a frame for object detection and calculate movements and direction vectors.
 
@@ -181,14 +181,14 @@ class ObjectDetection:
                 for i, det in enumerate(result.boxes):
                     bbox = det.xyxy[0].tolist()
 
-                    self.add_accessories(frame, num_objects=num_objects, bbox=bbox)
+                    self.Accessories(frame, num_objects=num_objects, bbox=bbox)
 
         except Exception as e:
             print(f"An exception occurred: {e}")
 
         return frame
 
-    def image_processing(self, frame):
+    def ImageProcessing(self, frame):
         """
         Process a frame for object detection and calculate movements and direction vectors.
 
@@ -230,12 +230,12 @@ class ObjectDetection:
                 x, y, w, h = cv2.boundingRect(max_contour)
                 bbox = [x, y, x+w, y+h]
 
-                self.add_accessories(frame, bbox=bbox)
+                self.Accessories(frame, bbox=bbox)
 
         return frame, mask
 
 
-    def menu(self):
+    def Menu(self):
         """
         Menu to choose input type and processing method.
         """
@@ -275,10 +275,10 @@ class ObjectDetection:
             
             if processing_method == '1':
                 # Process frame using YOLO model
-                processed_frame = self.ProcessFrame(frame)
+                processed_frame = self.YoloModel(frame)
             elif processing_method == '2':
                 # Process frame using image processing
-                processed_frame, mask_frame = self.image_processing(frame)
+                processed_frame, mask_frame = self.ImageProcessing(frame)
             
             cv2.imshow("Object Detection", processed_frame)
 
